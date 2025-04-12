@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PersonListComponent } from './person-list/person-list.component';
@@ -20,6 +20,9 @@ import { ApiService } from './services/api.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  @ViewChild(PersonListComponent) personListComponent!: PersonListComponent;
+  @ViewChild(EmploymentListComponent) employmentListComponent!: EmploymentListComponent;
+
   companies: string[] = [];
   selectedCompany: string = '';
   error: string | null = null;
@@ -33,9 +36,9 @@ export class AppComponent implements OnInit {
   loadCompanies(): void {
     this.apiService.getCompanies().subscribe({
       next: (data) => {
-        console.log('Companies loaded:', data); // Ajout pour déboguer
+        console.log('Companies loaded:', data);
         this.companies = data;
-        if (data.length > 0 && !this.selectedCompany) {
+        if (data.length > 0 && !this.companies.includes(this.selectedCompany)) {
           this.selectedCompany = data[0];
         }
       },
@@ -43,5 +46,11 @@ export class AppComponent implements OnInit {
         this.error = 'Erreur lors de la récupération des entreprises : ' + err.message;
       }
     });
+  }
+
+  onEmploymentAdded(): void {
+    this.loadCompanies();
+    this.personListComponent.loadPersons();
+    this.employmentListComponent.loadEmployments();
   }
 }

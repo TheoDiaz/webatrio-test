@@ -1,50 +1,88 @@
-<div>
-    <h2>Ajouter une personne</h2>
-    <div *ngIf="error" class="error">{{ error }}</div>
-    <div *ngIf="success" class="success">{{ success }}</div>
-    <form (ngSubmit)="createPerson()">
-      <div>
-        <label for="nom">Nom :</label>
-        <input id="nom" type="text" [(ngModel)]="person.nom" name="nom" required />
-      </div>
-      <div>
-        <label for="prenom">Prénom :</label>
-        <input id="prenom" type="text" [(ngModel)]="person.prenom" name="prenom" required />
-      </div>
-      <div>
-        <label for="dateNaissance">Date de naissance (YYYY-MM-DD) :</label>
-        <input id="dateNaissance" type="text" [(ngModel)]="person.dateNaissance" name="dateNaissance" required />
-      </div>
-      <button type="submit">Ajouter la personne</button>
-    </form>
-  
-    <h2>Ajouter un emploi</h2>
-    <form (ngSubmit)="createEmployment()">
-      <div>
-        <label for="personId">Personne :</label>
-        <select id="personId" [(ngModel)]="employment.personId" name="personId" required>
-          <option value="">Sélectionner une personne</option>
-          <option *ngFor="let person of persons" [value]="person.id">
-            {{ person.prenom }} {{ person.nom }}
-          </option>
-        </select>
-      </div>
-      <div>
-        <label for="nomEntreprise">Entreprise :</label>
-        <input id="nomEntreprise" type="text" [(ngModel)]="employment.nomEntreprise" name="nomEntreprise" required />
-      </div>
-      <div>
-        <label for="poste">Poste :</label>
-        <input id="poste" type="text" [(ngModel)]="employment.poste" name="poste" required />
-      </div>
-      <div>
-        <label for="dateDebut">Date de début (YYYY-MM-DD) :</label>
-        <input id="dateDebut" type="text" [(ngModel)]="employment.dateDebut" name="dateDebut" required />
-      </div>
-      <div>
-        <label for="dateFin">Date de fin (YYYY-MM-DD, optionnel) :</label>
-        <input id="dateFin" type="text" [(ngModel)]="employment.dateFin" name="dateFin" />
-      </div>
-      <button type="submit">Ajouter l’emploi</button>
-    </form>
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <h2 class="h5 mb-0">
+      <i class="bi bi-person-plus-fill me-2"></i>Ajouter une personne
+    </h2>
   </div>
+  <div class="card-body">
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+      <button type="button" class="btn-close" (click)="error = null" aria-label="Close"></button>
+    </div>
+    <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-2"></i>{{ success }}
+      <button type="button" class="btn-close" (click)="success = null" aria-label="Close"></button>
+    </div>
+    <form (ngSubmit)="createPerson()" class="mb-4">
+      <div class="mb-3">
+        <label for="nom" class="form-label fw-bold">
+          <i class="bi bi-person me-2"></i>Nom :
+        </label>
+        <input id="nom" type="text" [(ngModel)]="person.nom" name="nom" class="form-control shadow-sm" required />
+      </div>
+      <div class="mb-3">
+        <label for="prenom" class="form-label fw-bold">
+          <i class="bi bi-person me-2"></i>Prénom :
+        </label>
+        <input id="prenom" type="text" [(ngModel)]="person.prenom" name="prenom" class="form-control shadow-sm" required />
+      </div>
+      <div class="mb-3">
+        <label for="dateNaissance" class="form-label fw-bold">
+          <i class="bi bi-calendar me-2"></i>Date de naissance (YYYY-MM-DD) :
+        </label>
+        <input id="dateNaissance" type="text" [(ngModel)]="person.dateNaissance" name="dateNaissance" class="form-control shadow-sm" required />
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Ajouter la personne
+      </button>
+    </form>
+
+    <div class="card-header bg-primary text-white">
+      <h2 class="h5 mb-0">
+        <i class="bi bi-briefcase-fill me-2"></i>Ajouter un emploi
+      </h2>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="createEmployment()">
+        <div class="mb-3">
+          <label for="personId" class="form-label fw-bold">
+            <i class="bi bi-person me-2"></i>Personne :
+          </label>
+          <select id="personId" [(ngModel)]="employment.personId" name="personId" class="form-select shadow-sm" required>
+            <option value="">Sélectionner une personne</option>
+            <option *ngFor="let person of persons" [value]="person.id">
+              {{ person.prenom }} {{ person.nom }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="nomEntreprise" class="form-label fw-bold">
+            <i class="bi bi-building me-2"></i>Entreprise :
+          </label>
+          <input id="nomEntreprise" type="text" [(ngModel)]="employment.nomEntreprise" name="nomEntreprise" class="form-control shadow-sm" required />
+        </div>
+        <div class="mb-3">
+          <label for="poste" class="form-label fw-bold">
+            <i class="bi bi-briefcase me-2"></i>Poste :
+          </label>
+          <input id="poste" type="text" [(ngModel)]="employment.poste" name="poste" class="form-control shadow-sm" required />
+        </div>
+        <div class="mb-3">
+          <label for="dateDebut" class="form-label fw-bold">
+            <i class="bi bi-calendar-event me-2"></i>Date de début (YYYY-MM-DD) :
+          </label>
+          <input id="dateDebut" type="text" [(ngModel)]="employment.dateDebut" name="dateDebut" class="form-control shadow-sm" required />
+        </div>
+        <div class="mb-3">
+          <label for="dateFin" class="form-label fw-bold">
+            <i class="bi bi-calendar-x me-2"></i>Date de fin (YYYY-MM-DD, optionnel) :
+          </label>
+          <input id="dateFin" type="text" [(ngModel)]="employment.dateFin" name="dateFin" class="form-control shadow-sm" />
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>Ajouter l’emploi
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

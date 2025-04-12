@@ -1,21 +1,57 @@
-<div style="padding: 20px;">
-  <h1>Application Webatrio</h1>
+<div class="container mt-4">
+  <h1 class="text-center mb-4 text-primary">
+    <i class="bi bi-building me-2"></i>Application Webatrio
+  </h1>
 
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = null" aria-label="Close"></button>
+  </div>
 
-  <div *ngIf="companies.length > 0; else noCompanies">
-    <label for="companySelect">Sélectionner une entreprise : </label>
-    <select id="companySelect" [(ngModel)]="selectedCompany">
+  <div *ngIf="companies.length > 0; else noCompanies" class="mb-4">
+    <label for="companySelect" class="form-label fw-bold">
+      <i class="bi bi-briefcase me-2"></i>Sélectionner une entreprise :
+    </label>
+    <select id="companySelect" [(ngModel)]="selectedCompany" class="form-select shadow-sm">
       <option *ngFor="let company of companies" [value]="company">
         {{ company }}
       </option>
     </select>
   </div>
   <ng-template #noCompanies>
-    <p>Aucune entreprise disponible.</p>
+    <p class="text-muted text-center">
+      <i class="bi bi-exclamation-circle me-2"></i>Aucune entreprise disponible.
+    </p>
   </ng-template>
 
-  <app-person-form (employmentAdded)="loadCompanies()"></app-person-form>
-  <app-person-list></app-person-list>
-  <app-employment-list [company]="selectedCompany"></app-employment-list>
+  <!-- Onglets Bootstrap -->
+  <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="form-tab" data-bs-toggle="tab" data-bs-target="#form" type="button" role="tab" aria-controls="form" aria-selected="true">
+        <i class="bi bi-person-plus me-2"></i>Ajouter
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="persons-tab" data-bs-toggle="tab" data-bs-target="#persons" type="button" role="tab" aria-controls="persons" aria-selected="false">
+        <i class="bi bi-people me-2"></i>Personnes
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="employments-tab" data-bs-toggle="tab" data-bs-target="#employments" type="button" role="tab" aria-controls="employments" aria-selected="false">
+        <i class="bi bi-briefcase me-2"></i>Emplois
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="form" role="tabpanel" aria-labelledby="form-tab">
+      <app-person-form (employmentAdded)="onEmploymentAdded()"></app-person-form>
+    </div>
+    <div class="tab-pane fade" id="persons" role="tabpanel" aria-labelledby="persons-tab">
+      <app-person-list></app-person-list>
+    </div>
+    <div class="tab-pane fade" id="employments" role="tabpanel" aria-labelledby="employments-tab">
+      <app-employment-list [company]="selectedCompany"></app-employment-list>
+    </div>
+  </div>
 </div>

@@ -17,6 +17,14 @@ export class PersonListComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
+    this.loadPersons();
+  }
+
+  loadPersons(): void { // Ajout de la méthode manquante
+    this.loadingPersons = true;
+    this.errorPersons = null;
+    this.persons = [];
+
     this.apiService.getPersons().subscribe({
       next: (data) => {
         console.log('Persons data:', data);

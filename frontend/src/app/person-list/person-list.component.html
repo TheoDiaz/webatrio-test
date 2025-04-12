@@ -1,19 +1,38 @@
-<div>
-    <h2>Liste des personnes</h2>
-    <p *ngIf="loadingPersons">Chargement des personnes...</p>
-    <p *ngIf="errorPersons" class="error">{{ errorPersons }}</p>
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-success text-white">
+    <h2 class="h5 mb-0">
+      <i class="bi bi-people-fill me-2"></i>Liste des personnes
+    </h2>
+  </div>
+  <div class="card-body">
+    <div *ngIf="loadingPersons" class="text-muted text-center">
+      <i class="bi bi-hourglass-split me-2"></i>Chargement des personnes...
+    </div>
+    <div *ngIf="errorPersons" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ errorPersons }}
+      <button type="button" class="btn-close" (click)="errorPersons = null" aria-label="Close"></button>
+    </div>
     <div *ngIf="!loadingPersons && !errorPersons">
-      <div *ngFor="let person of persons" class="person">
-        <h3>{{ person.prenom }} {{ person.nom }} ({{ person.age }} ans)</h3>
-        <h4>Emplois actuels :</h4>
-        <ul *ngIf="person.currentEmployments.length > 0; else noEmployments">
-          <li *ngFor="let emp of person.currentEmployments">
-            {{ emp.poste }} chez {{ emp.nomEntreprise }} (depuis {{ emp.dateDebut }})
-          </li>
-        </ul>
-        <ng-template #noEmployments>
-          <p>Aucun emploi actuel</p>
-        </ng-template>
+      <div *ngFor="let person of persons" class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h3 class="h6">
+            <i class="bi bi-person-circle me-2 text-primary"></i>{{ person.prenom }} {{ person.nom }} ({{ person.age }} ans)
+          </h3>
+          <h4 class="h6">
+            <i class="bi bi-briefcase me-2"></i>Emplois actuels :
+          </h4>
+          <ul *ngIf="person.currentEmployments.length > 0; else noEmployments" class="list-group list-group-flush">
+            <li *ngFor="let emp of person.currentEmployments" class="list-group-item">
+              <i class="bi bi-check-circle me-2 text-success"></i>{{ emp.poste }} chez {{ emp.nomEntreprise }} (depuis {{ emp.dateDebut }})
+            </li>
+          </ul>
+          <ng-template #noEmployments>
+            <p class="text-muted">
+              <i class="bi bi-x-circle me-2 text-danger"></i>Aucun emploi actuel
+            </p>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>
+</div>

@@ -27,7 +27,7 @@ export class EmploymentListComponent implements OnInit, OnChanges {
     }
   }
 
-  private loadEmployments(): void {
+  loadEmployments(): void {
     this.loadingEmployments = true;
     this.errorEmployments = null;
     this.employments = [];

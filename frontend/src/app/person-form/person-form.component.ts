@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
-import { HttpErrorResponse } from '@angular/common/http'; // Import pour typer l'erreur
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-person-form',
@@ -41,7 +41,7 @@ export class PersonFormComponent {
       next: (data) => {
         this.persons = data;
       },
-      error: (err: HttpErrorResponse) => { // Typage explicite de err
+      error: (err: HttpErrorResponse) => {
         this.error = 'Erreur lors de la récupération des personnes : ' + err.message;
       }
     });
@@ -56,6 +56,7 @@ export class PersonFormComponent {
         this.success = 'Personne créée avec succès !';
         this.person = { nom: '', prenom: '', dateNaissance: '' };
         this.loadPersons();
+        this.employmentAdded.emit();
       },
       error: (err: HttpErrorResponse) => {
         this.error = 'Erreur lors de la création de la personne : ' + err.message;
@@ -76,11 +77,11 @@ export class PersonFormComponent {
       next: (response) => {
         this.success = 'Emploi ajouté avec succès !';
         this.employment = { personId: null, nomEntreprise: '', poste: '', dateDebut: '', dateFin: '' };
-        this.employmentAdded.emit();
+        this.employmentAdded.emit(); // Émet l'événement après ajout d'un emploi
       },
       error: (err: HttpErrorResponse) => {
         this.error = 'Erreur lors de l’ajout de l’emploi : ' + err.message;
       }
-    }); // Assure-toi que cette parenthèse est bien présente
+    });
   }
 }
