@@ -1,48 +1,64 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-employment-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './employment-list.component.html',
   styleUrls: ['./employment-list.component.css']
 })
-export class EmploymentListComponent implements OnInit, OnChanges {
-  @Input() company: string = 'TechCorp';
+export class EmploymentListComponent implements OnInit {
+  companies: string[] = [];
+  selectedCompany: string = '';
   employments: any[] = [];
-  loadingEmployments = true;
-  errorEmployments: string | null = null;
+  error: string | null = null;
+  loading = false;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.loadEmployments();
+    this.loadCompanies();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['company'] && changes['company'].currentValue) {
-      this.loadEmployments();
-    }
+  loadCompanies(): void {
+    this.apiService.getCompanies().subscribe({
+      next: (data: string[]) => {
+        this.companies = data;
+        if (data.length > 0 && !this.companies.includes(this.selectedCompany)) {
+          this.selectedCompany = data[0];
+          this.loadEmployments();
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error = 'Erreur lors de la récupération des entreprises : ' + err.message;
+      }
+    });
   }
 
   loadEmployments(): void {
-    this.loadingEmployments = true;
-    this.errorEmployments = null;
-    this.employments = [];
+    if (!this.selectedCompany) return;
 
-    this.apiService.getEmploymentsByCompany(this.company).subscribe({
-      next: (data) => {
-        console.log('Employments data:', data);
+    this.loading = true;
+    this.employments = [];
+    this.error = null;
+
+    this.apiService.getEmploymentsByCompany(this.selectedCompany).subscribe({
+      next: (data: any[]) => {
         this.employments = data;
-        this.loadingEmployments = false;
+        this.loading = false;
       },
-      error: (err) => {
-        console.error('Error fetching employments:', err);
-        this.errorEmployments = 'Erreur lors de la récupération des emplois : ' + err.message;
-        this.loadingEmployments = false;
+      error: (err: HttpErrorResponse) => {
+        this.error = 'Erreur lors de la récupération des emplois : ' + err.message;
+        this.loading = false;
       }
     });
+  }
+
+  onCompanyChange(): void {
+    this.loadEmployments();
   }
 }

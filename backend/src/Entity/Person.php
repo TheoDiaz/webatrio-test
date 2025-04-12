@@ -75,7 +75,7 @@ class Person
         $today = new \DateTime();
         $interval = $today->diff($dateNaissance);
         if ($interval->y >= 150) {
-            throw new \InvalidArgumentException('The person must be less than 150 years old.');
+            throw new \InvalidArgumentException('La personne ne peut pas avoir plus de 150ans.');
         }
         $this->dateNaissance = $dateNaissance;
         return $this;

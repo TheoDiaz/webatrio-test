@@ -37,19 +37,30 @@ class PersonController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $person = new Person();
-        $person->setNom($data['nom'] ?? '');
-        $person->setPrenom($data['prenom'] ?? '');
-        $person->setDateNaissance(new \DateTime($data['dateNaissance'] ?? 'now'));
+
+        try {
+            $person->setNom($data['nom'] ?? '');
+            $person->setPrenom($data['prenom'] ?? '');
+            $person->setDateNaissance(new \DateTime($data['dateNaissance'] ?? 'now'));
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Invalid date format for dateNaissance, use YYYY-MM-DD'], 400);
+        }
 
         $errors = $this->validator->validate($person);
         if (count($errors) > 0) {
-            return $this->json(['errors' => (string) $errors], 400);
+            return $this->json(['error' => (string) $errors], 400);
         }
 
         $this->entityManager->persist($person);
         $this->entityManager->flush();
 
-        $json = $this->serializer->serialize($person, 'json', ['groups' => 'person:read']);
+        $json = $this->serializer->serialize($person, 'json', [
+            'groups' => 'person:read',
+            'datetime_format' => 'Y-m-d',
+            'circular_reference_handler' => fn($object) => $object->getId()
+        ]);
         return new JsonResponse($json, 201, [], true);
     }
 
@@ -83,4 +94,57 @@ class PersonController extends AbstractController
 
         return new JsonResponse($data, 200);
     }
+    #[Route('/{id}/employments/between-dates', methods: ['GET'])]
+public function getEmploymentsBetweenDates(Request $request, int $id): JsonResponse
+{
+    // Récupérer les paramètres startDate et endDate depuis la requête
+    $startDateStr = $request->query->get('startDate');
+    $endDateStr = $request->query->get('endDate');
+
+    // Valider la présence des paramètres
+    if (!$startDateStr || !$endDateStr) {
+        return $this->json(['error' => 'Les paramètres startDate et endDate sont requis'], 400);
+    }
+
+    // Convertir les dates en objets DateTime
+    try {
+        $startDate = new \DateTime($startDateStr);
+        $endDate = new \DateTime($endDateStr);
+    } catch (\Exception $e) {
+        return $this->json(['error' => 'Format de date invalide, utilisez YYYY-MM-DD'], 400);
+    }
+
+    // Vérifier que startDate est antérieure à endDate
+    if ($startDate > $endDate) {
+        return $this->json(['error' => 'startDate doit être antérieure à endDate'], 400);
+    }
+
+    // Récupérer la personne
+    $person = $this->personRepository->find($id);
+    if (!$person) {
+        return $this->json(['error' => 'Personne non trouvée'], 404);
+    }
+
+    // Filtrer les emplois entre les deux dates
+    $employments = $person->getEmployments()->filter(function ($employment) use ($startDate, $endDate) {
+        $dateDebut = $employment->getDateDebut();
+        $dateFin = $employment->getDateFin() ?? new \DateTime(); // Si dateFin est null, considérer comme en cours
+
+        // Vérifier si l'emploi chevauche la période spécifiée
+        return ($dateDebut <= $endDate) && ($dateFin >= $startDate);
+    });
+
+    // Sérialiser les emplois
+    $json = $this->serializer->serialize(
+        array_values($employments->toArray()),
+        'json',
+        [
+            'groups' => ['employment:read', 'person:read'],
+            'datetime_format' => 'Y-m-d',
+            'circular_reference_handler' => fn($object) => $object->getId()
+        ]
+    );
+
+    return new JsonResponse($json, 200, [], true);
+}
 }

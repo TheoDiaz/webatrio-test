@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-person-form',
@@ -30,7 +30,8 @@ export class PersonFormComponent {
 
   persons: any[] = [];
   error: string | null = null;
-  success: string | null = null;
+  personSuccess: string | null = null;
+  employmentSuccess: string | null = null;
 
   constructor(private apiService: ApiService) {
     this.loadPersons();
@@ -38,28 +39,29 @@ export class PersonFormComponent {
 
   loadPersons(): void {
     this.apiService.getPersons().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         this.persons = data;
       },
       error: (err: HttpErrorResponse) => {
-        this.error = 'Erreur lors de la récupération des personnes : ' + err.message;
+        this.error = err.error?.error || 'Erreur lors de la récupération des personnes : ' + err.message;
       }
     });
   }
 
   createPerson(): void {
     this.error = null;
-    this.success = null;
+    this.personSuccess = null;
+    this.employmentSuccess = null;
 
     this.apiService.createPerson(this.person).subscribe({
-      next: (response) => {
-        this.success = 'Personne créée avec succès !';
+      next: (response: any) => {
+        this.personSuccess = 'Personne créée avec succès !';
         this.person = { nom: '', prenom: '', dateNaissance: '' };
         this.loadPersons();
         this.employmentAdded.emit();
       },
       error: (err: HttpErrorResponse) => {
-        this.error = 'Erreur lors de la création de la personne : ' + err.message;
+        this.error = err.error?.error || 'Erreur lors de la création de la personne : ' + err.message;
       }
     });
   }
@@ -71,16 +73,17 @@ export class PersonFormComponent {
     }
 
     this.error = null;
-    this.success = null;
+    this.personSuccess = null;
+    this.employmentSuccess = null;
 
     this.apiService.createEmployment(this.employment.personId, this.employment).subscribe({
-      next: (response) => {
-        this.success = 'Emploi ajouté avec succès !';
+      next: (response: any) => {
+        this.employmentSuccess = 'Emploi ajouté avec succès !';
         this.employment = { personId: null, nomEntreprise: '', poste: '', dateDebut: '', dateFin: '' };
-        this.employmentAdded.emit(); // Émet l'événement après ajout d'un emploi
+        this.employmentAdded.emit();
       },
       error: (err: HttpErrorResponse) => {
-        this.error = 'Erreur lors de l’ajout de l’emploi : ' + err.message;
+        this.error = err.error?.error || 'Erreur lors de l’ajout de l’emploi : ' + err.message;
       }
     });
   }

@@ -1,0 +1,57 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-warning text-white">
+      <h2 class="h5 mb-0">
+        <i class="bi bi-clock-history me-2"></i>Historique des emplois
+      </h2>
+    </div>
+    <div class="card-body">
+      <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+        <button type="button" class="btn-close" (click)="error = null" aria-label="Close"></button>
+      </div>
+      <form (ngSubmit)="searchEmployments()">
+        <div class="mb-3">
+          <label for="personId" class="form-label fw-bold">
+            <i class="bi bi-person me-2"></i>Personne :
+          </label>
+          <select id="personId" [(ngModel)]="selectedPersonId" name="personId" class="form-select shadow-sm" required>
+            <option value="">Sélectionner une personne</option>
+            <option *ngFor="let person of persons" [value]="person.id">
+              {{ person.prenom }} {{ person.nom }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="startDate" class="form-label fw-bold">
+            <i class="bi bi-calendar-event me-2"></i>Date de début (YYYY-MM-DD) :
+          </label>
+          <input id="startDate" type="text" [(ngModel)]="startDate" name="startDate" class="form-control shadow-sm" required />
+        </div>
+        <div class="mb-3">
+          <label for="endDate" class="form-label fw-bold">
+            <i class="bi bi-calendar-x me-2"></i>Date de fin (YYYY-MM-DD) :
+          </label>
+          <input id="endDate" type="text" [(ngModel)]="endDate" name="endDate" class="form-control shadow-sm" required />
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search me-2"></i>Rechercher
+        </button>
+      </form>
+  
+      <div class="mt-4">
+        <div *ngIf="loading" class="text-muted text-center">
+          <i class="bi bi-hourglass-split me-2"></i>Chargement des emplois...
+        </div>
+        <ul *ngIf="employments.length > 0 && !loading; else noEmployments" class="list-group list-group-flush">
+          <li *ngFor="let emp of employments" class="list-group-item">
+            <i class="bi bi-check-circle me-2 text-success"></i>{{ emp.poste }} chez {{ emp.nomEntreprise }} (du {{ emp.dateDebut }} au {{ emp.dateFin || 'présent' }})
+          </li>
+        </ul>
+        <ng-template #noEmployments>
+          <p *ngIf="!loading" class="text-muted">
+            <i class="bi bi-x-circle me-2 text-danger"></i>Aucun emploi trouvé pour cette période.
+          </p>
+        </ng-template>
+      </div>
+    </div>
+  </div>

@@ -1,30 +1,43 @@
 <div class="card shadow-sm mb-4">
   <div class="card-header bg-info text-white">
     <h2 class="h5 mb-0">
-      <i class="bi bi-briefcase-fill me-2"></i>Emplois chez {{ company }}
+      <i class="bi bi-briefcase me-2"></i>Emplois par entreprise
     </h2>
   </div>
   <div class="card-body">
-    <div *ngIf="loadingEmployments" class="text-muted text-center">
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+      <button type="button" class="btn-close" (click)="error = null" aria-label="Close"></button>
+    </div>
+
+    <div *ngIf="companies.length > 0; else noCompanies" class="mb-4">
+      <label for="companySelect" class="form-label fw-bold">
+        <i class="bi bi-briefcase me-2"></i>Sélectionner une entreprise :
+      </label>
+      <select id="companySelect" [(ngModel)]="selectedCompany" (ngModelChange)="onCompanyChange()" class="form-select shadow-sm">
+        <option *ngFor="let company of companies" [value]="company">
+          {{ company }}
+        </option>
+      </select>
+    </div>
+    <ng-template #noCompanies>
+      <p class="text-muted text-center">
+        <i class="bi bi-exclamation-circle me-2"></i>Aucune entreprise disponible.
+      </p>
+    </ng-template>
+
+    <div *ngIf="loading" class="text-muted text-center">
       <i class="bi bi-hourglass-split me-2"></i>Chargement des emplois...
     </div>
-    <div *ngIf="errorEmployments" class="alert alert-danger alert-dismissible fade show" role="alert">
-      <i class="bi bi-exclamation-triangle me-2"></i>{{ errorEmployments }}
-      <button type="button" class="btn-close" (click)="errorEmployments = null" aria-label="Close"></button>
-    </div>
-    <div *ngIf="!loadingEmployments && !errorEmployments">
-      <ul *ngIf="employments.length > 0; else noEmploymentsCompany" class="list-group list-group-flush">
-        <li *ngFor="let emp of employments" class="list-group-item d-flex justify-content-between align-items-center">
-          <span>
-            <i class="bi bi-check-circle me-2 text-success"></i>{{ emp.poste }} - {{ emp.person.prenom }} {{ emp.person.nom }} (depuis {{ emp.dateDebut }})
-          </span>
-        </li>
-      </ul>
-      <ng-template #noEmploymentsCompany>
-        <p class="text-muted">
-          <i class="bi bi-x-circle me-2 text-danger"></i>Aucun emploi trouvé pour cette entreprise
-        </p>
-      </ng-template>
-    </div>
+    <ul *ngIf="employments.length > 0 && !loading; else noEmployments" class="list-group list-group-flush">
+      <li *ngFor="let emp of employments" class="list-group-item">
+        <i class="bi bi-check-circle me-2 text-success"></i>{{ emp.person?.prenom }} {{ emp.person?.nom }} - {{ emp.poste }} (du {{ emp.dateDebut }} au {{ emp.dateFin || 'présent' }})
+      </li>
+    </ul>
+    <ng-template #noEmployments>
+      <p *ngIf="!loading" class="text-muted">
+        <i class="bi bi-x-circle me-2 text-danger"></i>Aucun emploi trouvé pour cette entreprise.
+      </p>
+    </ng-template>
   </div>
 </div>

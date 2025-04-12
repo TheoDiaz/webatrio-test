@@ -29,4 +29,8 @@ export class ApiService {
   getCompanies(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/companies`);
   }
+  
+  getEmploymentsBetweenDates(personId: number, startDate: string, endDate: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/persons/${personId}/employments/between-dates?startDate=${startDate}&endDate=${endDate}`);
+  }
 }
