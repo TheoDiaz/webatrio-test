@@ -1,0 +1,13 @@
+App\Entity\Person:
+    attributes:
+        id:
+            groups: ['person:read']
+        nom:
+            groups: ['person:read']
+        prenom:
+            groups: ['person:read']
+        dateNaissance:
+            groups: ['person:read']
+        employments:
+            groups: ['person:read']
+            serialized_name: employments

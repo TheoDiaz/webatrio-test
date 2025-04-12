@@ -1,0 +1,14 @@
+App\Entity\Employment:
+    attributes:
+        id:
+            groups: ['employment:read']
+        nomEntreprise:
+            groups: ['employment:read']
+        poste:
+            groups: ['employment:read']
+        dateDebut:
+            groups: ['employment:read']
+        dateFin:
+            groups: ['employment:read']
+        person:
+            groups: ['employment:read']
