@@ -1,0 +1,15 @@
+<div>
+    <h2>Emplois chez {{ company }}</h2>
+    <p *ngIf="loadingEmployments">Chargement des emplois...</p>
+    <p *ngIf="errorEmployments" class="error">{{ errorEmployments }}</p>
+    <div *ngIf="!loadingEmployments && !errorEmployments">
+      <ul *ngIf="employments.length > 0; else noEmploymentsCompany">
+        <li *ngFor="let emp of employments">
+          {{ emp.poste }} - {{ emp.person.prenom }} {{ emp.person.nom }} (depuis {{ emp.dateDebut }})
+        </li>
+      </ul>
+      <ng-template #noEmploymentsCompany>
+        <p>Aucun emploi trouvé pour cette entreprise</p>
+      </ng-template>
+    </div>
+  </div>

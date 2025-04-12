@@ -1,0 +1,19 @@
+<div>
+    <h2>Liste des personnes</h2>
+    <p *ngIf="loadingPersons">Chargement des personnes...</p>
+    <p *ngIf="errorPersons" class="error">{{ errorPersons }}</p>
+    <div *ngIf="!loadingPersons && !errorPersons">
+      <div *ngFor="let person of persons" class="person">
+        <h3>{{ person.prenom }} {{ person.nom }} ({{ person.age }} ans)</h3>
+        <h4>Emplois actuels :</h4>
+        <ul *ngIf="person.currentEmployments.length > 0; else noEmployments">
+          <li *ngFor="let emp of person.currentEmployments">
+            {{ emp.poste }} chez {{ emp.nomEntreprise }} (depuis {{ emp.dateDebut }})
+          </li>
+        </ul>
+        <ng-template #noEmployments>
+          <p>Aucun emploi actuel</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>

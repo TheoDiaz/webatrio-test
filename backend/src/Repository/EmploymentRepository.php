@@ -21,6 +21,18 @@ class EmploymentRepository extends ServiceEntityRepository
         parent::__construct($registry, Employment::class);
     }
 
+    public function findDistinctCompanies(): array
+    {
+        $query = $this->createQueryBuilder('e')
+            ->select('DISTINCT e.nomEntreprise')
+            ->orderBy('e.nomEntreprise', 'ASC')
+            ->getQuery();
+
+        $result = $query->getResult();
+        return array_column($result, 'nomEntreprise');
+    }
+
+
 //    /**
 //     * @return Employment[] Returns an array of Employment objects
 //     */

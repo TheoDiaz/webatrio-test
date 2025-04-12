@@ -68,20 +68,27 @@ class EmploymentController extends AbstractController
     }
 
     #[Route('/employments', methods: ['GET'])]
-    public function listByCompany(Request $request): JsonResponse
+    public function listByCompany(Request $request, EmploymentRepository $employmentRepository, SerializerInterface $serializer): JsonResponse
     {
         $company = $request->query->get('company');
         if (!$company) {
             return $this->json(['error' => 'Company parameter is required'], 400);
         }
 
-        $employments = $this->employmentRepository->findBy(['nomEntreprise' => $company]);
-        $json = $this->serializer->serialize($employments, 'json', [
+        $employments = $employmentRepository->findBy(['nomEntreprise' => $company]);
+        $json = $serializer->serialize($employments, 'json', [
             'groups' => ['employment:read', 'person:read'],
             'datetime_format' => 'Y-m-d',
             'circular_reference_handler' => fn($object) => $object->getId()
         ]);
 
         return new JsonResponse(json_decode($json, true), 200);
+    }
+
+    #[Route('/companies', name: 'api_companies', methods: ['GET'])]
+    public function getCompanies(EmploymentRepository $employmentRepository): JsonResponse
+    {
+        $companies = $employmentRepository->findDistinctCompanies();
+        return new JsonResponse($companies, 200);
     }
 }

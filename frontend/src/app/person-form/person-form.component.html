@@ -1,0 +1,50 @@
+<div>
+    <h2>Ajouter une personne</h2>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="success" class="success">{{ success }}</div>
+    <form (ngSubmit)="createPerson()">
+      <div>
+        <label for="nom">Nom :</label>
+        <input id="nom" type="text" [(ngModel)]="person.nom" name="nom" required />
+      </div>
+      <div>
+        <label for="prenom">Prénom :</label>
+        <input id="prenom" type="text" [(ngModel)]="person.prenom" name="prenom" required />
+      </div>
+      <div>
+        <label for="dateNaissance">Date de naissance (YYYY-MM-DD) :</label>
+        <input id="dateNaissance" type="text" [(ngModel)]="person.dateNaissance" name="dateNaissance" required />
+      </div>
+      <button type="submit">Ajouter la personne</button>
+    </form>
+  
+    <h2>Ajouter un emploi</h2>
+    <form (ngSubmit)="createEmployment()">
+      <div>
+        <label for="personId">Personne :</label>
+        <select id="personId" [(ngModel)]="employment.personId" name="personId" required>
+          <option value="">Sélectionner une personne</option>
+          <option *ngFor="let person of persons" [value]="person.id">
+            {{ person.prenom }} {{ person.nom }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label for="nomEntreprise">Entreprise :</label>
+        <input id="nomEntreprise" type="text" [(ngModel)]="employment.nomEntreprise" name="nomEntreprise" required />
+      </div>
+      <div>
+        <label for="poste">Poste :</label>
+        <input id="poste" type="text" [(ngModel)]="employment.poste" name="poste" required />
+      </div>
+      <div>
+        <label for="dateDebut">Date de début (YYYY-MM-DD) :</label>
+        <input id="dateDebut" type="text" [(ngModel)]="employment.dateDebut" name="dateDebut" required />
+      </div>
+      <div>
+        <label for="dateFin">Date de fin (YYYY-MM-DD, optionnel) :</label>
+        <input id="dateFin" type="text" [(ngModel)]="employment.dateFin" name="dateFin" />
+      </div>
+      <button type="submit">Ajouter l’emploi</button>
+    </form>
+  </div>
